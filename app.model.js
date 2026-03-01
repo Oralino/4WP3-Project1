@@ -52,8 +52,16 @@ async function addGame(title, playtime_hours, status, personal_rating) {
     `, [title, playtime_hours, status, personal_rating, date_added]);
 }
 
+
+//Function to delete a game
+async function deleteGame(id){
+    const db = await initDB();
+    await db.run('DELETE FROM Games WHERE rowid = ?', [id]);
+}
+
 //Export the functions so the controller can use them
 module.exports = {
     getAllGames,
-    addGame
+    addGame,
+    deleteGame
 };

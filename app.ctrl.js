@@ -40,6 +40,18 @@ app.get('/add', (req, res) => {
     res.render('add', { error: null }); 
 });
 
+
+app.get('/delete/:id', async (req, res) => {
+    try {
+        const id = req.params.id; //Grab the ID from the URL
+        await Model.deleteGame(id); //Delete
+        res.redirect('/all'); //Refresh the dashboard
+    } catch (err) {
+        console.error("Error deleting game:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 app.post('/create', async (req, res) => {
     const { title, playtime_hours, status, personal_rating } = req.body;
     let errorMessage = null;
