@@ -31,10 +31,6 @@ app.get('/all', async (req, res) => {
 });
 
 
-//Redirect the root URL to /all for convenience
-app.get('/', (req, res) => {
-    res.redirect('/all');
-});
 
 //Start the server
 app.listen(PORT, () => {
