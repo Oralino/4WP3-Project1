@@ -39,7 +39,21 @@ async function getAllGames() {
     return results;
 }
 
+
+//Function to add a new game to the database
+async function addGame(title, playtime_hours, status, personal_rating) {
+    const db = await initDB();
+    const date_added = new Date().toISOString().split('T')[0]; 
+
+    //Insert the new record
+    await db.run(`
+        INSERT INTO Games (title, playtime_hours, status, personal_rating, date_added) 
+        VALUES (?, ?, ?, ?, ?)
+    `, [title, playtime_hours, status, personal_rating, date_added]);
+}
+
 //Export the functions so the controller can use them
 module.exports = {
-    getAllGames
+    getAllGames,
+    addGame
 };
