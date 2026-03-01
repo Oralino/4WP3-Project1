@@ -32,7 +32,7 @@ async function initDB() {
     return db;
 }
 
-//Example of a model function you will call from your controller
+//Model to retrieve all games
 async function getAllGames() {
     const db = await initDB();
     const results = await db.all("SELECT rowid, * FROM Games");
