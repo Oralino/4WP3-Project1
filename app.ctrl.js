@@ -30,6 +30,51 @@ app.get('/all', async (req, res) => {
     }
 });
 
+//Redirect root to /all
+app.get('/', (req, res) => {
+    res.redirect('/all');
+});
+
+
+app.get('/add', (req, res) => {
+    res.render('add', { error: null }); 
+});
+
+app.post('/create', async (req, res) => {
+    const { title, playtime_hours, status, personal_rating } = req.body;
+    let errorMessage = null;
+
+    const playtime = parseFloat(playtime_hours);
+    const rating = parseInt(personal_rating, 10);
+
+    //Form Validation
+    if (!title || title.trim() === "") {
+        errorMessage = "Title cannot be empty.";
+    } else if (isNaN(playtime) || playtime < 0) {
+        errorMessage = "Playtime must be a numeric value greater than or equal to 0.";
+    } else if (isNaN(rating) || rating < 1 || rating > 10) {
+        errorMessage = "Personal Rating must be a whole number between 1 and 10.";
+    }
+
+    //If validation fails
+    if (errorMessage) {
+        return res.render('add', { 
+            error: errorMessage, 
+            title: title, 
+            playtime_hours: playtime_hours, 
+            personal_rating: personal_rating 
+        });
+    }
+
+    //If validation passes
+    try {
+        await Model.addGame(title, playtime, status, rating);
+        res.redirect('/all');
+    } catch (err) {
+        console.error("Error adding game:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 
 //Start the server
