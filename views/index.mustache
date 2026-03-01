@@ -18,6 +18,14 @@
         </nav>
         <div class="container">
             <h2 class="mb-4">My Game Library</h2>
+            <div class="mb-3">
+                <strong>Sort by:</strong>
+                <a href="/sort/title" class="btn btn-sm btn-outline-secondary ms-2">Title</a>
+                <a href="/sort/personal_rating"
+                   class="btn btn-sm btn-outline-secondary ms-2">Rating</a>
+                <a href="/sort/playtime_hours"
+                   class="btn btn-sm btn-outline-secondary ms-2">Playtime</a>
+            </div>
             <div class="row">
                 {{#games}}
                 <div class="col-md-4 mb-4">
@@ -33,6 +41,7 @@
                             </p>
                         </div>
                         <div class="card-footer bg-white border-top-0">
+                            <a href="/details/{{rowid}}" class="btn btn-sm btn-outline-info">Details</a>
                             <a href="/edit/{{rowid}}" class="btn btn-sm btn-outline-primary">Edit</a>
                             <a href="/delete/{{rowid}}" class="btn btn-sm btn-outline-danger">Delete</a>
                         </div>

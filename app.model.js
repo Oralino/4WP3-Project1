@@ -77,11 +77,27 @@ async function updateGame(id, title, playtime_hours, status, personal_rating) {
     `, [title, playtime_hours, status, personal_rating, id]);
 }
 
+//Function to get all games sorted by a specific column
+async function getGamesSorted(column) {
+    const db = await initDB();
+    
+    //Whitelist
+    const validColumns = ['playtime_hours', 'personal_rating', 'title'];
+    const sortCol = validColumns.includes(column) ? column : 'rowid';
+
+    //Sort rating and playtime highest-to-lowest (DESC), but title alphabetically (ASC)
+    const order = (sortCol === 'title') ? 'ASC' : 'DESC';
+
+    const results = await db.all(`SELECT rowid, * FROM Games ORDER BY ${sortCol} ${order}`);
+    return results;
+}
+
 //Export the functions so the controller can use them
 module.exports = {
     getAllGames,
     addGame,
     deleteGame,
     getGameById,
-    updateGame
+    updateGame,
+    getGamesSorted
 };

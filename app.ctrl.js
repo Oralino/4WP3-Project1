@@ -74,6 +74,39 @@ app.get('/edit/:id', async (req, res) => {
     }
 });
 
+//Reads detail
+app.get('/details/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const game = await Model.getGameById(id);
+        
+        if (!game) {
+            return res.status(404).send("Game not found.");
+        }
+
+        res.render('details', { game: game });
+    } catch (err) {
+        console.error("Error loading details:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+//Reads Sorted data
+app.get('/sort/:column', async (req, res) => {
+    try {
+        const column = req.params.column;
+        const games = await Model.getGamesSorted(column);
+        
+        //Reuse the dashboard view
+        res.render('index', { 
+            games: games,
+            totalGames: games.length 
+        });
+    } catch (err) {
+        console.error("Error fetching sorted games:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 app.post('/update', async (req, res) => {
     //Grab ID from input field form
