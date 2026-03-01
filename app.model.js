@@ -59,9 +59,29 @@ async function deleteGame(id){
     await db.run('DELETE FROM Games WHERE rowid = ?', [id]);
 }
 
+//Function to grab single game by ID
+async function getGameById(id){
+    const db = await initDB();
+    const game = await db.get("SELECT rowid, * FROM Games WHERE rowid = ?", [id]);
+    return game;
+}
+
+
+//Function to update existing game
+async function updateGame(id, title, playtime_hours, status, personal_rating) {
+    const db = await initDB();
+    await db.run(`
+        UPDATE Games 
+        SET title = ?, playtime_hours = ?, status = ?, personal_rating = ?
+        WHERE rowid = ?
+    `, [title, playtime_hours, status, personal_rating, id]);
+}
+
 //Export the functions so the controller can use them
 module.exports = {
     getAllGames,
     addGame,
-    deleteGame
+    deleteGame,
+    getGameById,
+    updateGame
 };

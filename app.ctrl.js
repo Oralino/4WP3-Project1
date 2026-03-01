@@ -41,6 +41,7 @@ app.get('/add', (req, res) => {
 });
 
 
+//Deletes Game
 app.get('/delete/:id', async (req, res) => {
     try {
         const id = req.params.id; //Grab the ID from the URL
@@ -51,6 +52,65 @@ app.get('/delete/:id', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
+//Edits Game
+app.get('/edit/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const game = await Model.getGameById(id);
+        
+        if (!game) {
+            return res.status(404).send("Game not found.");
+        }
+        //Mustache being logicless, we pass boolean to select right option
+        game.isBacklog = game.status === "Backlog";
+        game.isInProgress = game.status === "In Progress";
+        game.isCompleted = game.status === "Completed";
+
+        res.render('edit', { game: game, error: null });
+    } catch (err) {
+        console.error("Error loading edit form:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
+app.post('/update', async (req, res) => {
+    //Grab ID from input field form
+    const { id, title, playtime_hours, status, personal_rating } = req.body;
+    let errorMessage = null;
+
+    const playtime = parseFloat(playtime_hours);
+    const rating = parseInt(personal_rating, 10);
+
+    //Form Validation
+    if (!title || title.trim() === "") {
+        errorMessage = "Title cannot be empty.";
+    } else if (isNaN(playtime) || playtime < 0) {
+        errorMessage = "Playtime must be a numeric value greater than or equal to 0.";
+    } else if (isNaN(rating) || rating < 1 || rating > 10) {
+        errorMessage = "Personal Rating must be an integer between 1 and 10.";
+    }
+
+    //If validation fails, re-render the edit form with the error and their inputted data
+    if (errorMessage) {
+        const tempGame = { rowid: id, title, playtime_hours, status, personal_rating };
+        tempGame.isBacklog = status === "Backlog";
+        tempGame.isInProgress = status === "In Progress";
+        tempGame.isCompleted = status === "Completed";
+        
+        return res.render('edit', { error: errorMessage, game: tempGame });
+    }
+
+    try {
+        await Model.updateGame(id, title, playtime, status, rating);
+        res.redirect('/all');
+    } catch (err) {
+        console.error("Error updating game:", err);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 
 app.post('/create', async (req, res) => {
     const { title, playtime_hours, status, personal_rating } = req.body;
