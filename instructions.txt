@@ -1,0 +1,10 @@
+To run the Steam Backlog Manager:
+
+1. Install dependencies:
+npm install
+
+2. Start the application server:
+node app.ctrl.js
+
+3. Open your web browser and navigate to:
+http://localhost:3000
